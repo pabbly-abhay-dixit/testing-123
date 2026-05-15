@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <title>Pabbly Agent</title>
+    <script src="https://payments.pabbly.com/api/checkout/popup-checkout.js"></script>
+  </head>
+  <body>
+    <div id="root">
+      <!-- Pre-React loading shell — generic layout that works for any route -->
+      <div id="app-shell" style="display:flex;height:100vh;background:#f5f5f5;font-family:Inter,system-ui,sans-serif">
+        <div style="width:220px;background:#fff;border-right:1px solid #e5e5e5;padding:16px 12px;display:none" class="app-shell-sidebar">
+          <div style="height:28px;width:130px;background:#e8e8e8;border-radius:8px;margin-bottom:28px;margin-left:4px"></div>
+          <div style="height:12px;width:75%;background:#f0f0f0;border-radius:4px;margin-bottom:16px;margin-left:4px"></div>
+          <div style="height:12px;width:55%;background:#f0f0f0;border-radius:4px;margin-bottom:16px;margin-left:4px"></div>
+          <div style="height:12px;width:65%;background:#f0f0f0;border-radius:4px;margin-bottom:16px;margin-left:4px"></div>
+          <div style="height:12px;width:45%;background:#f0f0f0;border-radius:4px;margin-left:4px"></div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+          <div style="height:56px;background:#fff;border-bottom:1px solid #e5e5e5;display:flex;align-items:center;padding:0 20px">
+            <div style="height:20px;width:140px;background:#eee;border-radius:6px"></div>
+          </div>
+          <div style="flex:1;padding:12px;display:flex;gap:12px;overflow:hidden">
+            <div style="flex:2;background:#fff;border-radius:12px;border:1px solid #e5e5e5;display:flex;flex-direction:column">
+              <div style="height:44px;border-bottom:1px solid #eee"></div>
+              <div style="flex:1;padding:16px">
+                <div style="height:16px;width:70%;background:#f0f0f0;border-radius:4px;margin-bottom:12px"></div>
+                <div style="height:12px;width:50%;background:#f5f5f5;border-radius:4px;margin-bottom:20px"></div>
+                <div style="height:16px;width:60%;background:#f0f0f0;border-radius:4px;margin-bottom:12px"></div>
+                <div style="height:12px;width:45%;background:#f5f5f5;border-radius:4px;margin-bottom:20px"></div>
+                <div style="height:16px;width:75%;background:#f0f0f0;border-radius:4px;margin-bottom:12px"></div>
+                <div style="height:12px;width:55%;background:#f5f5f5;border-radius:4px"></div>
+              </div>
+              <div style="height:52px;border-top:1px solid #eee;padding:8px"><div style="height:100%;background:#f5f5f5;border-radius:8px"></div></div>
+            </div>
+            <div style="flex:1;background:#fff;border-radius:12px;border:1px solid #e5e5e5;display:none" class="app-shell-right">
+              <div style="height:44px;border-bottom:1px solid #eee"></div>
+              <div style="padding:12px">
+                <div style="height:60px;background:#f8f8f8;border-radius:8px;margin-bottom:8px;border:1px solid #f0f0f0"></div>
+                <div style="height:60px;background:#f8f8f8;border-radius:8px;margin-bottom:8px;border:1px solid #f0f0f0"></div>
+                <div style="height:60px;background:#f8f8f8;border-radius:8px;border:1px solid #f0f0f0"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <style>@media(min-width:640px){.app-shell-sidebar{display:block!important}.app-shell-right{display:block!important}}</style>
+    </div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
