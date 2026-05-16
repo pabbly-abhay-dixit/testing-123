@@ -48,6 +48,12 @@ const PROVIDER_META = {
 
 const MAX_NAME_LEN = 60
 
+// Density / scaling thresholds for the connection list.
+// COLLAPSE_THRESHOLD: above this count, extras are hidden behind a "Show N more" toggle.
+// FILTER_THRESHOLD: above this count, a name/key-hint filter input renders in the section head.
+const COLLAPSE_THRESHOLD = 5
+const FILTER_THRESHOLD = 8
+
 // Per-provider accent gradient applied to the row icon. The gradient itself
 // is inline-styled (Tailwind can express it via arbitrary values but the
 // readability is poor for 5 variants); each provider just supplies its
@@ -65,18 +71,16 @@ const ACCENT_BY_PROVIDER = {
 // one repeated element of the V1Studio layout, fully expressed in Tailwind
 // utilities (no custom CSS).
 const CARD_CLS = 'bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-sm overflow-hidden'
-const SECTION_HEAD_CLS = 'flex flex-wrap items-baseline justify-between gap-3 px-5 pt-4 pb-2'
+const SECTION_HEAD_CLS = 'flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-4 pt-2.5 pb-1.5'
 const SECTION_TITLE_CLS = 'text-[13px] font-semibold text-neutral-900 dark:text-neutral-100 tracking-tight'
 const SECTION_META_CLS = 'text-xs text-neutral-500 dark:text-neutral-400'
-// `transition-[padding,background-color]` so both the hover slide AND the
-// open-state tint ease in. `hover:pl-7` is `pl-5 → pl-7` (4px slide).
-const ROW_CLS = 'grid grid-cols-[44px_1fr_auto_28px] gap-4 items-center px-5 py-[18px] border-b border-neutral-200/60 dark:border-neutral-700/50 cursor-pointer transition-[padding,background-color] duration-200 hover:bg-neutral-100/40 dark:hover:bg-neutral-700/30 hover:pl-7'
-const ROW_OPEN_CLS = 'bg-neutral-100/60 dark:bg-neutral-700/40 pl-7'
-const ICON_CLS = 'w-9 h-9 rounded-[9px] grid place-items-center text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_3px_8px_rgba(78,71,214,0.25)]'
+const ROW_CLS = 'grid grid-cols-[36px_1fr_auto_24px] gap-3 items-center px-4 py-2.5 border-b border-neutral-200/60 dark:border-neutral-700/50 cursor-pointer transition-colors duration-150 hover:bg-neutral-100/40 dark:hover:bg-neutral-700/30'
+const ROW_OPEN_CLS = 'bg-neutral-100/60 dark:bg-neutral-700/40'
+const ICON_CLS = 'w-7 h-7 rounded-md grid place-items-center text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_2px_5px_rgba(78,71,214,0.2)]'
 const PANEL_CLS = 'grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out'
 const PANEL_OPEN_CLS = 'grid-rows-[1fr]'
 const FORM_CLS = 'overflow-hidden'  // wraps the actual form so the grid-rows 0→1fr clip works
-const FORM_GRID_CLS = 'px-5 pt-3 pb-7 grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-4'
+const FORM_GRID_CLS = 'px-4 pt-2 pb-4 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2.5'
 const FIELD_CLS = 'flex flex-col gap-1.5'
 const LABEL_CLS = 'text-[11px] tracking-wider uppercase text-neutral-500 dark:text-neutral-400 font-semibold flex gap-1.5 items-baseline'
 const INPUT_CLS = 'bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg px-3 py-2.5 text-[13.5px] font-medium font-mono text-neutral-900 dark:text-neutral-100 outline-none w-full transition-[border-color,box-shadow] duration-150 focus:border-indigo-600 focus:shadow-[0_0_0_3px_rgba(78,71,214,0.13)] placeholder:text-neutral-400 placeholder:font-normal'
@@ -89,12 +93,14 @@ const BTN_PRIMARY_CLS = 'inline-flex items-center gap-1 px-3 py-1.5 text-sm font
 const BTN_ACCENT_CLS = 'inline-flex items-center gap-1 px-3 py-1.5 text-sm font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 transition-colors shadow-sm disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-blue-600'
 const BTN_DANGER_CLS = 'inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium rounded-xl border border-red-600 text-red-700 hover:bg-red-50 dark:border-red-500 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent'
 const BTN_GHOST_CLS = 'inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium rounded-xl text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-100/60 dark:hover:bg-neutral-700/40 transition-colors disabled:opacity-30 disabled:cursor-not-allowed'
-const ADD_ROW_CLS = 'grid grid-cols-[44px_1fr_auto_28px] gap-4 items-center px-5 py-[18px] cursor-pointer border-b border-neutral-200/60 dark:border-neutral-700/50 last:border-b-0 transition-[padding,background-color] duration-200 hover:bg-neutral-100/40 dark:hover:bg-neutral-700/30 hover:pl-7'
-const ADD_ICON_CLS = 'w-9 h-9 rounded-[9px] border border-dashed border-neutral-300 dark:border-neutral-600 grid place-items-center text-neutral-500 dark:text-neutral-400'
+const ADD_ROW_CLS = 'grid grid-cols-[36px_1fr_24px] sm:grid-cols-[36px_1fr_auto_24px] gap-3 items-center px-4 py-2.5 cursor-pointer border-b border-neutral-200/60 dark:border-neutral-700/50 last:border-b-0 transition-colors duration-150 hover:bg-neutral-100/40 dark:hover:bg-neutral-700/30'
+const ADD_ICON_CLS = 'w-7 h-7 rounded-md border border-dashed border-neutral-300 dark:border-neutral-600 grid place-items-center text-neutral-500 dark:text-neutral-400'
 // Shimmer placeholders for the loading state. The `animate-shimmer` class
 // is wired in index.css's `@theme` block.
 const SKEL_CLS = 'inline-block rounded bg-gradient-to-r from-neutral-200 via-neutral-100 to-neutral-200 dark:from-neutral-700 dark:via-neutral-600 dark:to-neutral-700 bg-[length:200%_100%] animate-shimmer'
-const SKEL_ICON_CLS = 'w-9 h-9 rounded-[9px] bg-gradient-to-r from-neutral-200 via-neutral-100 to-neutral-200 dark:from-neutral-700 dark:via-neutral-600 dark:to-neutral-700 bg-[length:200%_100%] animate-shimmer'
+const SKEL_ICON_CLS = 'w-7 h-7 rounded-md bg-gradient-to-r from-neutral-200 via-neutral-100 to-neutral-200 dark:from-neutral-700 dark:via-neutral-600 dark:to-neutral-700 bg-[length:200%_100%] animate-shimmer'
+const FILTER_INPUT_CLS = 'w-full px-3 py-1 text-[12px] bg-neutral-50 dark:bg-neutral-900/40 border border-neutral-200 dark:border-neutral-700 rounded-md focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-neutral-800 text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 transition-colors'
+const TOGGLE_ROW_CLS = 'w-full px-4 py-1.5 text-[11.5px] font-medium hover:bg-neutral-100/40 dark:hover:bg-neutral-700/30 border-b border-neutral-200/60 dark:border-neutral-700/50 transition-colors text-left flex items-center gap-1.5'
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  Main page
@@ -121,12 +127,12 @@ export default function AISettings() {
   useEffect(() => { loadKeys() }, [])
 
   return (
-    <div className="p-3 sm:p-6 overflow-x-hidden">
+    <div className="p-3 sm:p-5 overflow-x-hidden">
       {/* Page header — Tailwind-styled, unchanged from the original AI Settings page. */}
-      <div className="mb-4 sm:mb-6 min-w-0">
+      <div className="mb-2 sm:mb-3 min-w-0">
         <div className="flex items-center gap-2">
           <Tooltip content="Connect your own AI provider API keys">
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-neutral-100 inline-block cursor-default">AI Settings</h1>
+            <h1 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-neutral-100 inline-block cursor-default">AI Settings</h1>
           </Tooltip>
           <Tooltip content="Bring Your Own Key — use your provider account instead of platform AI Credits">
             <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 text-[10px] font-semibold text-primary-700 dark:text-primary-400 uppercase tracking-wider">
@@ -135,19 +141,19 @@ export default function AISettings() {
             </span>
           </Tooltip>
         </div>
-        <p className="text-sm sm:text-base text-gray-600 dark:text-neutral-400 mt-0.5 sm:mt-1">
+        <p className="text-[12.5px] sm:text-[13px] text-gray-600 dark:text-neutral-400 mt-0.5 leading-snug">
           Connect your own API keys for Anthropic, OpenAI, Google, and OpenRouter. Save multiple
-          named connections per provider and pick a default — your agents will use it instead of
-          platform AI Credits.
+          named connections per provider and pick a default.
         </p>
       </div>
 
       {loading ? (
-        <div className="space-y-4">
-          {[0, 1, 2, 3, 4].map(i => <ProviderSkeleton key={i} rows={i % 2 === 0 ? 2 : 1} />)}
+        <div className="space-y-2">
+          {/* First card shimmers as "one connection added"; the rest shimmer as empty (bottom AddRow). Mirrors the most common first-paint shape: one provider configured, the others not yet. */}
+          {[1, 0, 0, 0, 0].map((rowCount, i) => <ProviderSkeleton key={i} rows={rowCount} />)}
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-2">
           {ALLOWED_PROVIDERS.map(provider => (
             <ProviderSection
               key={provider}
@@ -178,26 +184,78 @@ const sortConnections = (a, b) => {
 function ProviderSection({ provider, connections, onReload }) {
   const [openId, setOpenId] = useState(null)
   const [adding, setAdding] = useState(false)
+  const [showAll, setShowAll] = useState(false)
+  const [filter, setFilter] = useState('')
   const meta = PROVIDER_META[provider]
   const accent = ACCENT_BY_PROVIDER[provider] || ACCENT_BY_PROVIDER.custom
   const setOpen = (id) => { setOpenId(openId === id ? null : id); setAdding(false) }
 
+  const { visible, filtered, hiddenCount, showFilter } = computeConnectionView(connections, filter, showAll)
+
+  const hasConnections = connections.length > 0
+  const toggleAdding = () => {
+    if (adding) setAdding(false)
+    else { setAdding(true); setOpenId(null) }
+  }
+  const addFormNode = adding && (
+    <StandardAddForm
+      provider={provider}
+      meta={meta}
+      existingNames={connections.map(c => c.name)}
+      onCancel={() => setAdding(false)}
+      onSaved={() => { setAdding(false); onReload() }}
+    />
+  )
+
   return (
     <section className={CARD_CLS}>
       <div className={SECTION_HEAD_CLS}>
-        <div className={SECTION_TITLE_CLS}>{PROVIDER_NAMES[provider]}</div>
-        <div className={SECTION_META_CLS}>
-          {connections.length === 0
-            ? 'Not connected'
-            : `${connections.length} connection${connections.length === 1 ? '' : 's'}`}
-          {meta.docsUrl && (
-            <> · <a className="text-indigo-600 dark:text-indigo-400 hover:underline" href={meta.docsUrl} target="_blank" rel="noopener noreferrer">Get key from {meta.docsLabel}</a></>
+        <div className="flex items-baseline gap-2 min-w-0 flex-1">
+          <div className={SECTION_TITLE_CLS}>{PROVIDER_NAMES[provider]}</div>
+          <div className={`${SECTION_META_CLS} truncate`}>
+            {connections.length === 0 ? (
+              'Not connected'
+            ) : (
+              <>
+                {connections.length}{' '}
+                <span className="sm:hidden">Conn{connections.length === 1 ? '' : 's'}</span>
+                <span className="hidden sm:inline">connection{connections.length === 1 ? '' : 's'}</span>
+              </>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          {hasConnections && (
+            <CompactAddButton
+              providerName={PROVIDER_NAMES[provider]}
+              open={adding}
+              onClick={toggleAdding}
+            />
           )}
+          {meta.docsUrl && <GetKeyButton url={meta.docsUrl} label={meta.docsLabel} />}
         </div>
       </div>
 
+      {hasConnections && (
+        <div className={`${PANEL_CLS} ${adding ? PANEL_OPEN_CLS : ''} ${adding ? 'border-b border-neutral-200/60 dark:border-neutral-700/50' : ''}`}>
+          <div className={FORM_CLS}>{addFormNode}</div>
+        </div>
+      )}
+
+      {showFilter && (
+        <div className="px-4 pb-1.5">
+          <input
+            type="text"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            placeholder={`Filter ${connections.length} ${PROVIDER_NAMES[provider]} connections…`}
+            className={FILTER_INPUT_CLS}
+          />
+        </div>
+      )}
+
       <div>
-        {connections.map(conn => (
+        {visible.map(conn => (
           <StandardRow
             key={conn.id}
             conn={conn}
@@ -208,25 +266,60 @@ function ProviderSection({ provider, connections, onReload }) {
             onReload={onReload}
           />
         ))}
-        <AddRow
-          providerName={PROVIDER_NAMES[provider]}
-          open={adding}
-          onOpen={() => { setAdding(true); setOpenId(null) }}
-          onClose={() => setAdding(false)}
-        >
-          {adding && (
-            <StandardAddForm
-              provider={provider}
-              meta={meta}
-              existingNames={connections.map(c => c.name)}
-              onCancel={() => setAdding(false)}
-              onSaved={() => { setAdding(false); onReload() }}
-            />
-          )}
-        </AddRow>
+        {filter.trim() && filtered.length === 0 && (
+          <div className="px-4 py-2.5 text-[11.5px] text-neutral-500 dark:text-neutral-400 border-b border-neutral-200/60 dark:border-neutral-700/50">
+            No connections match &ldquo;{filter}&rdquo;
+          </div>
+        )}
+        {hiddenCount > 0 && (
+          <button
+            type="button"
+            onClick={() => setShowAll(true)}
+            className={`${TOGGLE_ROW_CLS} text-indigo-600 dark:text-indigo-400`}
+          >
+            <ChevronDown /> Show {hiddenCount} more {hiddenCount === 1 ? 'connection' : 'connections'}
+          </button>
+        )}
+        {showAll && filtered.length > COLLAPSE_THRESHOLD && (
+          <button
+            type="button"
+            onClick={() => setShowAll(false)}
+            className={`${TOGGLE_ROW_CLS} text-neutral-500 dark:text-neutral-400`}
+          >
+            <ChevronUp /> Show less
+          </button>
+        )}
+        {!hasConnections && (
+          <AddRow
+            providerName={PROVIDER_NAMES[provider]}
+            open={adding}
+            onOpen={() => { setAdding(true); setOpenId(null) }}
+            onClose={() => setAdding(false)}
+          >
+            {addFormNode}
+          </AddRow>
+        )}
       </div>
     </section>
   )
+}
+
+// Shared collapse + filter logic. When a filter is active, all matching
+// rows render expanded (no collapse during search). Empty filter falls back
+// to the slice-to-COLLAPSE_THRESHOLD behavior unless `showAll` is true.
+// Plain function (not a hook) — runs synchronously inside each section's render.
+function computeConnectionView(connections, filter, showAll) {
+  const q = filter.trim().toLowerCase()
+  const filtered = q
+    ? connections.filter(c =>
+        (c.name || '').toLowerCase().includes(q) ||
+        (c.key_hint || '').toLowerCase().includes(q))
+    : connections
+  const showFilter = connections.length >= FILTER_THRESHOLD
+  const collapsed = !showAll && !q && filtered.length > COLLAPSE_THRESHOLD
+  const visible = collapsed ? filtered.slice(0, COLLAPSE_THRESHOLD) : filtered
+  const hiddenCount = filtered.length - visible.length
+  return { visible, filtered, hiddenCount, showFilter }
 }
 
 // ─── Standard row (single key field) ────────────────────────────────────────
@@ -318,16 +411,16 @@ function StandardRow({ conn, provider, accent, open, onToggle, onReload }) {
           <ProviderLogo providerId={provider} fallbackLetter={PROVIDER_NAMES[provider]?.[0]} />
         </div>
         <div>
-          <div className="text-[15px] font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2 flex-wrap">
+          <div className="text-[13.5px] font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2 flex-wrap leading-tight">
             {conn.name || 'Default'}
             {conn.is_default && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 font-semibold tracking-wider uppercase">Default</span>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 font-semibold tracking-wider uppercase"><span className="sm:hidden">Def</span><span className="hidden sm:inline">Default</span></span>
             )}
           </div>
-          <div className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 font-mono break-all">{conn.key_hint || '••••'}</div>
+          <div className="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0 font-mono break-all leading-tight">{conn.key_hint || '••••'}</div>
         </div>
-        <div className="inline-flex gap-1.5 items-center text-[11.5px] font-semibold tracking-wider uppercase text-emerald-700 dark:text-emerald-400">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_0_3px_rgba(34,197,94,0.18)]" />
+        <div className="inline-flex gap-1 items-center text-[10.5px] font-semibold tracking-wider uppercase text-emerald-700 dark:text-emerald-400">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
           Connected
         </div>
         <div className={`text-neutral-400 grid place-items-center transition-transform duration-200 ${open ? 'rotate-90 text-indigo-600 dark:text-indigo-400' : ''}`}>
@@ -452,21 +545,73 @@ function StandardAddForm({ provider, meta, existingNames, onCancel, onSaved }) {
 function CustomSection({ connections, onReload }) {
   const [openId, setOpenId] = useState(null)
   const [adding, setAdding] = useState(false)
+  const [showAll, setShowAll] = useState(false)
+  const [filter, setFilter] = useState('')
   const setOpen = (id) => { setOpenId(openId === id ? null : id); setAdding(false) }
+
+  const { visible, filtered, hiddenCount, showFilter } = computeConnectionView(connections, filter, showAll)
+
+  const hasConnections = connections.length > 0
+  const toggleAdding = () => {
+    if (adding) setAdding(false)
+    else { setAdding(true); setOpenId(null) }
+  }
+  const addFormNode = adding && (
+    <CustomAddForm
+      existingNames={connections.map(c => c.name)}
+      onCancel={() => setAdding(false)}
+      onSaved={() => { setAdding(false); onReload() }}
+    />
+  )
 
   return (
     <section className={CARD_CLS}>
       <div className={SECTION_HEAD_CLS}>
-        <div className={SECTION_TITLE_CLS}>OpenAI Compatible</div>
-        <div className={SECTION_META_CLS}>
-          {connections.length === 0
-            ? 'Connect any OpenAI-compatible API — Friendli, Together, Baseten, vLLM, Ollama…'
-            : `${connections.length} connection${connections.length === 1 ? '' : 's'}`}
+        <div className="flex items-baseline gap-2 min-w-0 flex-1">
+          <div className={SECTION_TITLE_CLS}>OpenAI Compatible</div>
+          <div className={`${SECTION_META_CLS} truncate`}>
+            {connections.length === 0 ? (
+              'Not connected'
+            ) : (
+              <>
+                {connections.length}{' '}
+                <span className="sm:hidden">Conn{connections.length === 1 ? '' : 's'}</span>
+                <span className="hidden sm:inline">connection{connections.length === 1 ? '' : 's'}</span>
+              </>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          {hasConnections && (
+            <CompactAddButton
+              providerName="OpenAI-compatible"
+              open={adding}
+              onClick={toggleAdding}
+            />
+          )}
         </div>
       </div>
 
+      {hasConnections && (
+        <div className={`${PANEL_CLS} ${adding ? PANEL_OPEN_CLS : ''} ${adding ? 'border-b border-neutral-200/60 dark:border-neutral-700/50' : ''}`}>
+          <div className={FORM_CLS}>{addFormNode}</div>
+        </div>
+      )}
+
+      {showFilter && (
+        <div className="px-4 pb-1.5">
+          <input
+            type="text"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            placeholder={`Filter ${connections.length} custom connections…`}
+            className={FILTER_INPUT_CLS}
+          />
+        </div>
+      )}
+
       <div>
-        {connections.map(conn => (
+        {visible.map(conn => (
           <CustomRow
             key={conn.id}
             conn={conn}
@@ -475,20 +620,39 @@ function CustomSection({ connections, onReload }) {
             onReload={onReload}
           />
         ))}
-        <AddRow
-          providerName="OpenAI-compatible"
-          open={adding}
-          onOpen={() => { setAdding(true); setOpenId(null) }}
-          onClose={() => setAdding(false)}
-        >
-          {adding && (
-            <CustomAddForm
-              existingNames={connections.map(c => c.name)}
-              onCancel={() => setAdding(false)}
-              onSaved={() => { setAdding(false); onReload() }}
-            />
-          )}
-        </AddRow>
+        {filter.trim() && filtered.length === 0 && (
+          <div className="px-4 py-2.5 text-[11.5px] text-neutral-500 dark:text-neutral-400 border-b border-neutral-200/60 dark:border-neutral-700/50">
+            No connections match &ldquo;{filter}&rdquo;
+          </div>
+        )}
+        {hiddenCount > 0 && (
+          <button
+            type="button"
+            onClick={() => setShowAll(true)}
+            className={`${TOGGLE_ROW_CLS} text-indigo-600 dark:text-indigo-400`}
+          >
+            <ChevronDown /> Show {hiddenCount} more {hiddenCount === 1 ? 'connection' : 'connections'}
+          </button>
+        )}
+        {showAll && filtered.length > COLLAPSE_THRESHOLD && (
+          <button
+            type="button"
+            onClick={() => setShowAll(false)}
+            className={`${TOGGLE_ROW_CLS} text-neutral-500 dark:text-neutral-400`}
+          >
+            <ChevronUp /> Show less
+          </button>
+        )}
+        {!hasConnections && (
+          <AddRow
+            providerName="OpenAI-compatible"
+            open={adding}
+            onOpen={() => { setAdding(true); setOpenId(null) }}
+            onClose={() => setAdding(false)}
+          >
+            {addFormNode}
+          </AddRow>
+        )}
       </div>
     </section>
   )
@@ -589,28 +753,38 @@ function CustomRow({ conn, open, onToggle, onReload }) {
 
   return (
     <>
-      <div className={`${ROW_CLS} ${open ? ROW_OPEN_CLS : ''}`} onClick={onToggle}>
-        <div
-          className={ICON_CLS}
-          style={{ background: `linear-gradient(160deg, ${accent.from} 0%, ${accent.to} 100%)` }}
-        >
-          <ZapIcon />
-        </div>
-        <div>
-          <div className="text-[15px] font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2 flex-wrap">
-            {conn.name || 'Custom'}
-            {conn.is_default && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 font-semibold tracking-wider uppercase">Default</span>
-            )}
+      <div
+        className={`cursor-pointer transition-colors duration-150 hover:bg-neutral-100/40 dark:hover:bg-neutral-700/30 border-b border-neutral-200/60 dark:border-neutral-700/50 ${open ? ROW_OPEN_CLS : ''}`}
+        onClick={onToggle}
+      >
+        <div className="grid grid-cols-[36px_1fr_auto_24px] gap-x-3 gap-y-0.5 items-center px-4 py-2.5">
+          <div
+            className={`${ICON_CLS} row-span-2 sm:row-span-1 self-center`}
+            style={{ background: `linear-gradient(160deg, ${accent.from} 0%, ${accent.to} 100%)` }}
+          >
+            <ZapIcon />
           </div>
-          <div className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 font-mono break-all">{conn.model_id || '—'}</div>
-        </div>
-        <div className="inline-flex gap-1.5 items-center text-[11.5px] font-semibold tracking-wider uppercase text-emerald-700 dark:text-emerald-400">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_0_3px_rgba(34,197,94,0.18)]" />
-          Connected
-        </div>
-        <div className={`text-neutral-400 grid place-items-center transition-transform duration-200 ${open ? 'rotate-90 text-indigo-600 dark:text-indigo-400' : ''}`}>
-          <ChevronRight />
+          <div className="min-w-0">
+            <div className="text-[13.5px] font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2 flex-wrap leading-tight">
+              {conn.name || 'Custom'}
+              {conn.is_default && (
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 font-semibold tracking-wider uppercase"><span className="sm:hidden">Def</span><span className="hidden sm:inline">Default</span></span>
+              )}
+            </div>
+            {/* Desktop: model_id inline under the name */}
+            <div className="hidden sm:block text-[11px] text-neutral-500 dark:text-neutral-400 mt-0 font-mono break-all leading-tight">{conn.model_id || '—'}</div>
+          </div>
+          <div className="inline-flex gap-1 items-center text-[10.5px] font-semibold tracking-wider uppercase text-emerald-700 dark:text-emerald-400">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            Connected
+          </div>
+          <div className={`text-neutral-400 grid place-items-center transition-transform duration-200 ${open ? 'rotate-90 text-indigo-600 dark:text-indigo-400' : ''}`}>
+            <ChevronRight />
+          </div>
+          {/* Mobile: model_id as a second row spanning cols 2–4. Icon's grid-row:1/-1 lets it span both rows so it stays vertically centered. */}
+          <div className="sm:hidden col-span-3 text-[11px] text-neutral-500 dark:text-neutral-400 font-mono break-all leading-tight">
+            {conn.model_id || '—'}
+          </div>
         </div>
       </div>
       <div className={`${PANEL_CLS} ${open ? PANEL_OPEN_CLS : ''}`}>
@@ -777,6 +951,56 @@ function CustomAddForm({ existingNames, onCancel, onSaved }) {
   )
 }
 
+// ─── "Get key" plain link — opens the provider's API-keys page ─────────────
+function GetKeyButton({ url, label }) {
+  return (
+    <Tooltip content={`Opens ${label} in a new tab`}>
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-1 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:underline"
+      >
+        Get key
+        <ExternalLinkIcon />
+      </a>
+    </Tooltip>
+  )
+}
+
+function ExternalLinkIcon() {
+  return (
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M14 4h6v6M20 4l-9 9M19 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+// ─── Compact add-new pill rendered in the section header ───────────────────
+// Shown when connections.length >= 1. For the empty state we still render the
+// full-width AddRow below — it earns its space by teaching first-time users
+// what to do.
+function CompactAddButton({ providerName, open, onClick }) {
+  const base = 'inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold rounded-md border border-dashed transition-colors'
+  const idle = 'border-neutral-300 dark:border-neutral-600 text-neutral-600 dark:text-neutral-300 hover:border-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50/50 dark:hover:bg-indigo-500/10'
+  const active = 'border-indigo-500 text-indigo-600 dark:text-indigo-400 bg-indigo-50/60 dark:bg-indigo-500/10'
+  return (
+    <Tooltip content={`Add another ${providerName} connection · press N`}>
+      <button
+        type="button"
+        onClick={onClick}
+        className={`${base} ${open ? active : idle}`}
+        aria-label={open ? `Cancel new ${providerName} connection` : `Add new ${providerName} connection`}
+      >
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+        </svg>
+        {open ? 'Cancel' : 'Add'}
+      </button>
+    </Tooltip>
+  )
+}
+
 // ─── Shared add row (CTA + expanded form host) ──────────────────────────────
 function AddRow({ providerName, open, onOpen, onClose, children }) {
   return (
@@ -785,15 +1009,15 @@ function AddRow({ providerName, open, onOpen, onClose, children }) {
         <div className={ADD_ICON_CLS}>
           <PlusIcon />
         </div>
-        <div>
-          <div className="text-[14.5px] font-semibold text-neutral-900 dark:text-neutral-100">
+        <div className="min-w-0">
+          <div className="text-[13px] font-semibold text-neutral-900 dark:text-neutral-100 leading-tight">
             {open ? `New ${providerName} connection` : 'Add a new connection'}
           </div>
-          <div className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
+          <div className="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0 leading-tight truncate">
             {open ? 'Fill in the details and save' : `Save another ${providerName} key under a different name`}
           </div>
         </div>
-        <span className="font-mono text-[11px] font-medium bg-neutral-100/80 dark:bg-neutral-700/40 border border-neutral-200 dark:border-neutral-600 px-1.5 py-0.5 rounded text-neutral-600 dark:text-neutral-400">N</span>
+        <span className="hidden sm:inline-block font-mono text-[11px] font-medium bg-neutral-100/80 dark:bg-neutral-700/40 border border-neutral-200 dark:border-neutral-600 px-1.5 py-0.5 rounded text-neutral-600 dark:text-neutral-400">N</span>
         <div className={`text-neutral-400 grid place-items-center transition-transform duration-200 ${open ? 'rotate-90 text-indigo-600 dark:text-indigo-400' : ''}`}>
           <ChevronRight />
         </div>
@@ -843,36 +1067,42 @@ function ResultPill({ ok, ms, msg }) {
 }
 
 // ─── Skeleton loader ────────────────────────────────────────────────────────
-function ProviderSkeleton({ rows = 1 }) {
+function ProviderSkeleton({ rows = 1, withAddRow = rows === 0 }) {
   return (
     <section className={CARD_CLS} aria-busy="true" aria-label="Loading provider connections">
       <div className={SECTION_HEAD_CLS}>
-        <span className={SKEL_CLS} style={{ width: 110, height: 13 }} />
-        <span className={SKEL_CLS} style={{ width: 180, height: 11 }} />
+        <div className="flex items-baseline gap-2 min-w-0 flex-1">
+          <span className={SKEL_CLS} style={{ width: 90, height: 14 }} />
+          <span className={SKEL_CLS} style={{ width: 50, height: 11 }} />
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          {rows > 0 && <span className={SKEL_CLS} style={{ width: 52, height: 20, borderRadius: 6 }} />}
+          <span className={SKEL_CLS} style={{ width: 48, height: 12 }} />
+        </div>
       </div>
       <div>
         {Array.from({ length: rows }).map((_, i) => (
-          <div key={i} className="grid grid-cols-[44px_1fr_auto_28px] gap-4 items-center px-5 py-[18px] border-b border-neutral-200/60 dark:border-neutral-700/50">
+          <div key={i} className="grid grid-cols-[36px_1fr_auto_24px] gap-x-3 items-center px-4 py-2.5 border-b border-neutral-200/60 dark:border-neutral-700/50">
             <span className={SKEL_ICON_CLS} />
-            <div>
-              <span className={SKEL_CLS} style={{ width: 130, height: 14, marginBottom: 6 }} />
-              <br />
-              <span className={SKEL_CLS} style={{ width: 200, height: 11 }} />
+            <div className="min-w-0">
+              <span className={SKEL_CLS} style={{ display: 'block', width: 'min(60%, 130px)', height: 13 }} />
+              <span className={SKEL_CLS} style={{ display: 'block', width: 'min(80%, 200px)', height: 10, marginTop: 6 }} />
             </div>
-            <span className={SKEL_CLS} style={{ width: 80, height: 11 }} />
+            <span className={SKEL_CLS} style={{ width: 60, height: 10 }} />
             <span className={SKEL_CLS} style={{ width: 12, height: 12, borderRadius: '50%' }} />
           </div>
         ))}
-        <div className="grid grid-cols-[44px_1fr_auto_28px] gap-4 items-center px-5 py-[18px]">
-          <span className="w-9 h-9 rounded-[9px] border border-dashed border-neutral-300 dark:border-neutral-600" />
-          <div>
-            <span className={SKEL_CLS} style={{ width: 150, height: 14, marginBottom: 6 }} />
-            <br />
-            <span className={SKEL_CLS} style={{ width: 240, height: 11 }} />
+        {withAddRow && (
+          <div className="grid grid-cols-[36px_1fr_24px] sm:grid-cols-[36px_1fr_auto_24px] gap-x-3 items-center px-4 py-2.5">
+            <span className="w-7 h-7 rounded-md border border-dashed border-neutral-300 dark:border-neutral-600" />
+            <div className="min-w-0">
+              <span className={SKEL_CLS} style={{ display: 'block', width: 'min(65%, 150px)', height: 13 }} />
+              <span className={SKEL_CLS} style={{ display: 'block', width: 'min(85%, 240px)', height: 10, marginTop: 6 }} />
+            </div>
+            <span className={`${SKEL_CLS} hidden sm:inline-block`} style={{ width: 20, height: 18 }} />
+            <span className={SKEL_CLS} style={{ width: 12, height: 12, borderRadius: '50%' }} />
           </div>
-          <span className={SKEL_CLS} style={{ width: 20, height: 18 }} />
-          <span className={SKEL_CLS} style={{ width: 12, height: 12, borderRadius: '50%' }} />
-        </div>
+        )}
       </div>
     </section>
   )
@@ -894,6 +1124,20 @@ function ChevronRight() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
       <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+function ChevronDown() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+      <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+function ChevronUp() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+      <path d="M6 15l6-6 6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }

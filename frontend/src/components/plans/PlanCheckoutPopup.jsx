@@ -17,7 +17,7 @@ import { paymentAPI } from '../../services/api'
 // captured here, posted to OUR backend (`POST /api/payment`), which then
 // brokers the actual gateway call to PSB / Stripe / PayPal. Modelled after
 // buy.pabbly.com/agenticai's checkout reference, adapted to React + our
-// `violet-*` accents to match the Premium tier card (which gets the
+// `blue-*` accents to match the Premium tier card (which gets the
 // "MOST POPULAR" badge), unifying the checkout step with the upgrade
 // path users most often arrive from.
 //
@@ -594,7 +594,7 @@ export default function PlanCheckoutPopup({ open, plan, user, onClose, onSuccess
         <div className="p-6 sm:p-7">
           {/* Header */}
           <div className="text-center mb-5">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400 text-[10px] font-bold uppercase tracking-wider mb-3">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-[10px] font-bold uppercase tracking-wider mb-3">
               <ShieldCheck size={11} />
               Secure Checkout
             </div>
@@ -732,7 +732,7 @@ export default function PlanCheckoutPopup({ open, plan, user, onClose, onSuccess
               <button
                 type="button"
                 onClick={() => setShowCoupon(true)}
-                className="self-start text-xs text-neutral-600 dark:text-neutral-400 hover:text-violet-600 dark:hover:text-violet-400 underline underline-offset-2 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-violet-500"
+                className="self-start text-xs text-neutral-600 dark:text-neutral-400 hover:text-blue-600 dark:hover:text-blue-400 underline underline-offset-2 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-blue-500"
               >
                 Have a coupon? Click here.
               </button>
@@ -749,7 +749,7 @@ export default function PlanCheckoutPopup({ open, plan, user, onClose, onSuccess
                   placeholder="Enter coupon code"
                   autoCapitalize="characters"
                   spellCheck={false}
-                  className="flex-1 min-w-0 h-10 px-3 border-2 border-neutral-200 dark:border-neutral-700 rounded-lg text-sm uppercase font-mono tabular-nums bg-white dark:bg-neutral-900 focus:outline-none focus:border-violet-500 disabled:bg-neutral-100 dark:disabled:bg-neutral-800 disabled:cursor-not-allowed"
+                  className="flex-1 min-w-0 h-10 px-3 border-2 border-neutral-200 dark:border-neutral-700 rounded-lg text-sm uppercase font-mono tabular-nums bg-white dark:bg-neutral-900 focus:outline-none focus:border-blue-500 disabled:bg-neutral-100 dark:disabled:bg-neutral-800 disabled:cursor-not-allowed"
                 />
                 <button
                   type="button"
@@ -778,7 +778,7 @@ export default function PlanCheckoutPopup({ open, plan, user, onClose, onSuccess
                 aria-live="polite"
                 className={`text-xs px-3 py-1.5 rounded-md border ${
                   couponMessage.type === 'success'
-                    ? 'bg-violet-50 dark:bg-violet-900/20 text-violet-700 dark:text-violet-400 border-violet-200 dark:border-violet-800/50'
+                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800/50'
                     : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800/50'
                 }`}
               >
@@ -822,7 +822,7 @@ export default function PlanCheckoutPopup({ open, plan, user, onClose, onSuccess
                     <button
                       type="button"
                       onClick={retryRecaptcha}
-                      className="text-[11px] font-semibold text-violet-700 dark:text-violet-400 hover:text-violet-800 dark:hover:text-violet-300 underline underline-offset-2"
+                      className="text-[11px] font-semibold text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline underline-offset-2"
                     >
                       Reload captcha
                     </button>
@@ -842,7 +842,7 @@ export default function PlanCheckoutPopup({ open, plan, user, onClose, onSuccess
               type="submit"
               disabled={submitting || !recaptchaToken}
               aria-disabled={submitting || !recaptchaToken}
-              className="w-full h-12 mt-1 inline-flex items-center justify-center gap-2 bg-violet-500 hover:bg-violet-600 disabled:bg-neutral-300 dark:disabled:bg-neutral-700 disabled:text-neutral-500 dark:disabled:text-neutral-400 text-white font-semibold rounded-xl shadow-sm transition-all active:scale-[0.99] disabled:cursor-not-allowed disabled:shadow-none"
+              className="w-full h-12 mt-1 inline-flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 disabled:bg-neutral-300 dark:disabled:bg-neutral-700 disabled:text-neutral-500 dark:disabled:text-neutral-400 text-white font-semibold rounded-xl shadow-sm transition-all active:scale-[0.99] disabled:cursor-not-allowed disabled:shadow-none"
             >
               {submitting ? (
                 <>
@@ -877,7 +877,7 @@ export default function PlanCheckoutPopup({ open, plan, user, onClose, onSuccess
                   href="https://www.pabbly.com/privacy-policy/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-violet-600 dark:hover:text-violet-400 hover:underline"
+                  className="hover:text-blue-600 dark:hover:text-blue-400 hover:underline"
                 >
                   Privacy Policy
                 </a>
@@ -886,7 +886,7 @@ export default function PlanCheckoutPopup({ open, plan, user, onClose, onSuccess
                   href="https://www.pabbly.com/terms-conditions/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-violet-600 dark:hover:text-violet-400 hover:underline"
+                  className="hover:text-blue-600 dark:hover:text-blue-400 hover:underline"
                 >
                   Terms &amp; Conditions
                 </a>
@@ -902,7 +902,7 @@ export default function PlanCheckoutPopup({ open, plan, user, onClose, onSuccess
             <div className="text-center">
               <Loader2
                 size={32}
-                className="animate-spin text-violet-500 mx-auto mb-3"
+                className="animate-spin text-blue-500 mx-auto mb-3"
               />
               <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                 Processing your payment…
@@ -930,7 +930,7 @@ function Field({ label, value, onChange, ...inputProps }) {
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="h-10 px-3 border-2 border-neutral-200 dark:border-neutral-700 rounded-lg text-sm bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/15 transition-shadow"
+        className="h-10 px-3 border-2 border-neutral-200 dark:border-neutral-700 rounded-lg text-sm bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 transition-shadow"
         {...inputProps}
       />
     </label>
@@ -976,7 +976,7 @@ function PaymentTab({ children, active, onClick, ariaLabel, disabled, title }) {
         disabled
           ? 'border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/40 text-neutral-400 dark:text-neutral-500 cursor-not-allowed opacity-60'
           : active
-            ? 'border-violet-500 bg-violet-50 dark:bg-violet-900/20 text-violet-700 dark:text-violet-400 shadow-sm'
+            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 shadow-sm'
             : 'border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:border-neutral-400 dark:hover:border-neutral-600'
       }`}
     >

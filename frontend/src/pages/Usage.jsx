@@ -680,13 +680,13 @@ export default function Usage() {
       {loading ? (
         <>
           {/* Usage Breakdown card — Top Models + Top Workflows + Tokens By Type
-              flat inside one outer card, sharing one heading. */}
+              as separate inner cards inside one outer card, sharing one heading. */}
           <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm p-4 sm:p-5 mb-4 sm:mb-6">
             <Skeleton className="h-5 w-40 mb-4" />
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-0 lg:divide-x lg:divide-neutral-200 lg:dark:divide-neutral-700">
-              <div className="lg:pr-5"><TopListSkeleton /></div>
-              <div className="lg:px-5"><TopListSkeleton /></div>
-              <div className="lg:pl-5"><TokensByTypeSkeleton /></div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <div className="bg-neutral-50 dark:bg-neutral-900/40 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4"><TopListSkeleton /></div>
+              <div className="bg-neutral-50 dark:bg-neutral-900/40 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4"><TopListSkeleton /></div>
+              <div className="bg-neutral-50 dark:bg-neutral-900/40 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4"><TokensByTypeSkeleton /></div>
             </div>
           </div>
           {/* Row 5: Usage Trend (line) + Cost by Model (donut). Same
@@ -707,8 +707,8 @@ export default function Usage() {
         </>
       ) : !summary ? null : (
         <>
-          {/* Usage Breakdown — single outer card wraps Top Models +
-              Top Workflows + Tokens By Type, all inline on desktop. */}
+          {/* Usage Breakdown — outer card wraps three inner cards:
+              Top Models + Top Workflows + Tokens By Type. */}
           {(((summary?.top_models?.length || sortedModels.length) > 0)
             || ((summary?.top_agents?.length || sortedAgents.length) > 0)
             || totalTokens > 0) && (
@@ -718,14 +718,14 @@ export default function Usage() {
                   Usage Breakdown
                 </h3>
               </Tooltip>
-              {/* Three flat sections — no nested card chrome so each
-                  subsection heading sits at the same x-coordinate as
-                  the outer "Usage Breakdown" heading. Vertical
-                  dividers separate columns on desktop. */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-0 lg:divide-x lg:divide-neutral-200 lg:dark:divide-neutral-700">
+              {/* Three separate inner cards — each subsection sits in its
+                  own bordered container so the visual grouping reads as
+                  "card inside a card" on desktop and a clean stack on
+                  mobile. */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 {/* Top Models */}
                 {((summary?.top_models?.length || sortedModels.length) > 0) && (
-                  <div className="lg:pr-5">
+                  <div className="bg-neutral-50 dark:bg-neutral-900/40 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4">
                     <Tooltip content="Models ranked by total dollar cost in this period">
                       <h4 className="text-[11px] font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3 inline-block">Top Models</h4>
                     </Tooltip>
@@ -745,7 +745,7 @@ export default function Usage() {
                 )}
                 {/* Top Workflows */}
                 {((summary?.top_agents?.length || sortedAgents.length) > 0) && (
-                  <div className="lg:px-5">
+                  <div className="bg-neutral-50 dark:bg-neutral-900/40 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4">
                     <Tooltip content="Workflows ranked by spend — click a row to filter">
                       <h4 className="text-[11px] font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3 inline-block">Top Workflows</h4>
                     </Tooltip>
@@ -765,7 +765,7 @@ export default function Usage() {
                 )}
                 {/* Tokens By Type — sorted list of mini-bars. */}
                 {totalTokens > 0 && (
-                  <div className="lg:pl-5">
+                  <div className="bg-neutral-50 dark:bg-neutral-900/40 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4">
                     <Tooltip content="Share of tokens by type — Input, Output, Cache Read and Cache Write, sorted by volume">
                       <h4 className="text-[11px] font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3 inline-block">Tokens By Type</h4>
                     </Tooltip>

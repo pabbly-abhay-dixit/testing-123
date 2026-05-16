@@ -404,6 +404,7 @@ export default function PlanPricingCards() {
           <ManageSubscriptionCard
             onManage={handleManageSubscription}
             managing={portalLoading}
+            showDetails={showDetails}
             className="order-last sm:order-first"
           />
         )}
@@ -552,7 +553,7 @@ function PlanHeader({ label, tagline }) {
 // the row stays visually balanced (3 equal columns), but the body
 // pitches subscription management (invoices, payment method, cancel)
 // instead of the Free tier. Single CTA opens PSB's customer portal.
-function ManageSubscriptionCard({ onManage, managing, className = '' }) {
+function ManageSubscriptionCard({ onManage, managing, showDetails = true, className = '' }) {
   return (
     <CardShell className={className}>
       {/* Reuse the same blue gradient tile chrome that the
@@ -577,7 +578,7 @@ function ManageSubscriptionCard({ onManage, managing, className = '' }) {
         &nbsp;
       </p>
 
-      <div className="border-t border-gray-100 dark:border-neutral-700 pt-4 mb-1 w-full flex flex-col">
+      <div className={`border-t border-gray-100 dark:border-neutral-700 pt-4 mb-1 w-full flex flex-col ${showDetails ? 'block' : 'sm:hidden'}`}>
         <FeaturesHeading />
         <FeatureBullets
           features={[

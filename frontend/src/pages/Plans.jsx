@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { Check, X, Workflow, Cpu, Users, CalendarClock } from 'lucide-react'
-import { subscriptionsAPI, schedulesAPI } from '../services/api'
+import { Check, X, Workflow, Cpu, Users } from 'lucide-react'
+import { subscriptionsAPI } from '../services/api'
 import { useEntitlements } from '../context/EntitlementsContext'
 import PlanPricingCards from '../components/plans/PlanPricingCards'
 import Tooltip from '../components/ui/Tooltip'
@@ -213,11 +213,6 @@ export default function Plans({ embedded = false }) {
   const { loaded: ctxLoaded, effective, subscriptions, refresh } = useEntitlements()
   const [me, setMe] = useState(null)
   const [fallbackLoading, setFallbackLoading] = useState(false)
-  // Count of active schedules — fetched separately because the
-  // entitlements payload only carries the boolean `schedulers_enabled`
-  // flag. One schedule attaches to one workflow, so the ceiling is the
-  // user's workflow limit (rendered as `schedulesCount / workflows_max`).
-  const [schedulesCount, setSchedulesCount] = useState(null)
 
   // Build the same { effective, subscriptions } shape the old getMine() returned
   // so the render block below doesn't have to change.
@@ -239,24 +234,6 @@ export default function Plans({ embedded = false }) {
       .finally(() => { if (!cancelled) setFallbackLoading(false) })
     return () => { cancelled = true }
   }, [ctxLoaded])
-
-  // Fetch the number of active schedules the user has set up. The
-  // entitlements payload only ships a boolean (`schedulers_enabled`),
-  // so we hit /api/schedules?limit=1 once and read the `total` field
-  // — gives us "X of your N workflows have a schedule" without
-  // dragging the full schedule list. Silent on failure (count stays
-  // null, tile falls back to boolean "Included" mode).
-  useEffect(() => {
-    let cancelled = false
-    schedulesAPI.list({ limit: 1 })
-      .then(({ data }) => {
-        if (cancelled) return
-        const total = data?.total ?? data?.pagination?.total ?? (Array.isArray(data?.schedules) ? data.schedules.length : 0)
-        setSchedulesCount(typeof total === 'number' ? total : 0)
-      })
-      .catch(() => { /* leave null — tile falls back to boolean mode */ })
-    return () => { cancelled = true }
-  }, [])
 
   const data = ctxMe || me
   const loading = !data && (fallbackLoading || !ctxLoaded)
@@ -496,30 +473,6 @@ export default function Plans({ embedded = false }) {
                     labelTooltip="Invited teammates."
                     valueTooltip="Invited / seat limit"
                   />
-                  {/* Schedulers — metered when enabled, otherwise a
-                      boolean pill. Same card chrome either way. */}
-                  {data.effective.schedulers_enabled && schedulesCount !== null ? (
-                    <EntitlementTile
-                      icon={CalendarClock}
-                      label="Schedulers"
-                      used={schedulesCount}
-                      max={data.effective.workflows_max}
-                      labelTooltip="Scheduled workflows."
-                      valueTooltip="Active / max"
-                    />
-                  ) : (
-                    <EntitlementTile
-                      icon={CalendarClock}
-                      label="Schedulers"
-                      status={!!data.effective.schedulers_enabled}
-                      labelTooltip="Run workflows on a schedule."
-                      valueTooltip={
-                        data.effective.schedulers_enabled
-                          ? "In your plan."
-                          : "Upgrade to enable."
-                      }
-                    />
-                  )}
                 </div>
               </div>
             </div>
